@@ -1,0 +1,17 @@
+.userinfo {
+    overflow: hidden;
+    height: 30%;
+    width: 100%;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    background-color: #ffbf00;
+    user-select: none;
+}
+
+.userinfo span {
+    font-size: 20px;
+    text-overflow: ellipsis;
+
+}

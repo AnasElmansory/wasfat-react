@@ -1,0 +1,22 @@
+.category-priorty-btn {
+    margin-inline: 10px !important;
+
+    color: white !important;
+
+}
+
+.category-priorty-btn.close {
+    background-color: #fa990e;
+}
+
+.category-priorty-btn.close:hover {
+    color: black !important
+}
+
+.category-priorty-btn.edit:hover {
+    color: black !important
+}
+
+.category-priorty-btn.edit {
+    background-color: #5b8d27;
+}

@@ -1,0 +1,19 @@
+.single-category-page {
+    display: flex;
+    width: 100%;
+    margin: 8px;
+    align-items: baseline;
+    flex-flow: wrap;
+    justify-content: space-evenly;
+}
+
+.single-category-container {
+    height: calc(100% - (20px + 56px));
+}
+
+.pagination-container {
+    position: fixed;
+    bottom: 25px;
+    color: red;
+
+}
