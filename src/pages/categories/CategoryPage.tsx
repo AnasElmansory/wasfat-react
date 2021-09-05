@@ -8,7 +8,7 @@ import { categoriesFetched } from "../../store/categories_slice";
 import "./CategoryPage.scss";
 
 export default function CategoryPage() {
-  const categories = useAppSelector((state) => state.category.categories);
+  const categories = useAppSelector((state) => state.store.category.categories);
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   useEffect(() => {

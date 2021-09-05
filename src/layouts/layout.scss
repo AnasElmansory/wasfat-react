@@ -14,4 +14,8 @@
     width: 100%;
     margin-inline: 16px;
 
+    @media screen and (max-width: 350px) {
+        margin-inline: 4px;
+    }
+
 }

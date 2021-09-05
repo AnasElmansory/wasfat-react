@@ -1,19 +1,22 @@
 .single-category-page {
     display: flex;
-    width: 100%;
-    margin: 8px;
-    align-items: baseline;
-    flex-flow: wrap;
-    justify-content: space-evenly;
+    justify-content: center;
+    margin-block: 14px;
 }
 
 .single-category-container {
-    height: calc(100% - (20px + 56px));
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-evenly;
+    width: 100%;
+    margin-bottom: 50px;
 }
 
 .pagination-container {
+    background-color: #eee;
+    padding: 0px 4px 4px 4px;
+    border-radius: 15px;
     position: fixed;
-    bottom: 25px;
-    color: red;
+    bottom: 16px;
 
 }

@@ -1,5 +1,5 @@
 import { firestore, store } from "../client";
-import { Dish, FoodCategory } from "./types";
+import { FoodCategory } from "./types";
 
 export async function getCategories(): Promise<FoodCategory[]> {
   const categoryQuery = firestore.query(

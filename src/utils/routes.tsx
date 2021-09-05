@@ -5,7 +5,7 @@ export interface AppRoute {
   path: string;
   name: string;
   component: JSX.Element;
-  children: AppRoute[];
+  children?: AppRoute[];
 }
 export default [
   {
@@ -24,24 +24,10 @@ export default [
     path: "/dashboard/dishes",
     name: "Dishes",
     component: <div>dishes page</div>,
-    children: [
-      {
-        path: "/dashboard/categories/:id",
-        name: "SingleCateory",
-        component: <div>SingleCategoryPage</div>,
-      },
-    ],
   },
   {
     path: "/dashboard/add-dish",
     name: "Add Dish",
     component: <div>add dish page</div>,
-    children: [
-      {
-        path: "/dashboard/categories/:id",
-        name: "SingleCateory",
-        component: <div>SingleCategoryPage</div>,
-      },
-    ],
   },
 ] as AppRoute[];

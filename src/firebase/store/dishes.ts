@@ -17,15 +17,34 @@ export async function getDishes({
   if (lastDishId) {
     queries.push(firestore.startAfter([{ id: lastDishId }]));
   }
-  if (categoryId) {
-    queries.push(firestore.where("categoryId", "array-contains", categoryId));
-  }
 
   const paginatedDishQuery = firestore.query(
     firestore.collection(store, "dishes"),
     ...queries
   );
   const query = await firestore.getDocs(paginatedDishQuery);
+  return query.docs.map((doc) => {
+    const data = doc.data();
+    const dish: Dish = {
+      id: data["id"],
+      name: data["name"],
+      rating: data["rating"],
+      addDate: data["addDate"],
+      subtitle: data["subtitle"],
+      categoryId: data["categoryId"],
+      dishImages: data["dishImages"],
+      dishDescription: data["dishDescription"],
+    };
+    return dish;
+  });
+}
+
+export async function getDishesByCategory(categoryId: string): Promise<Dish[]> {
+  const categoryQuery = firestore.query(
+    firestore.collection(store, "dishes"),
+    firestore.where("categoryId", "array-contains", categoryId)
+  );
+  const query = await firestore.getDocs(categoryQuery);
   return query.docs.map((doc) => {
     const data = doc.data();
     const dish: Dish = {

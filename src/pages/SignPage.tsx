@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import auth from "../firebase/auth";
 import "./SignPage.scss";
 import { useHistory } from "react-router";

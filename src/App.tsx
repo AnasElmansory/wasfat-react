@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import LoadingPage from "./pages/LoadingPage";
 import CategoryPage from "./pages/categories/CategoryPage";
 import routes from "./utils/routes";
+import Dashboard from "./pages/dashboard/Dashboard";
 
 export interface AppProps {}
 
@@ -35,9 +36,13 @@ class App extends React.Component<AppProps, AppState> {
           <Route path="/sign">
             <SignInScreen />
           </Route>
+
           <Route path="/dashboard">
             <Layout>
               <Switch>
+                <Route exact path="/dashboard">
+                  <Dashboard />
+                </Route>
                 {routes.map((route) => {
                   return (
                     <Route path={route.path} key={route.name}>
@@ -45,7 +50,7 @@ class App extends React.Component<AppProps, AppState> {
                         <Route exact path={route.path}>
                           {route.component}
                         </Route>
-                        {route.children.map((childRoute) => {
+                        {route.children?.map((childRoute) => {
                           return (
                             <Route path={childRoute.path} key={childRoute.name}>
                               {childRoute.component}

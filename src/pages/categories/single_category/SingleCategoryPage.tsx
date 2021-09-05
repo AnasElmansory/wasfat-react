@@ -1,60 +1,49 @@
 import { Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
-import { getDishes } from "../../../firebase/store/dishes";
-import { Dish, FoodCategory } from "../../../firebase/store/types";
-import { dishesFetched, lastPageReached } from "../../../store/dishes_slice";
+import { useParams } from "react-router";
+import DishCard from "../../../components/dish/DishCard";
+import { getDishesByCategory } from "../../../firebase/store/dishes";
+import { categoryDishesFetched } from "../../../store/categories_slice";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import "./SingleCategoryPage.scss";
+
+interface Params {
+  id: string;
+}
+
 export default function SingleCategoryPage() {
-  const dispatch = useAppDispatch();
-  const location = useLocation();
+  const { id } = useParams<Params>();
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const pageCount = useAppSelector((state) => state.dish.dishes.length);
-  const lastPage = useAppSelector((state) => state.dish.lastPage);
-  const currentPageDishes = useAppSelector(
-    (state) =>
-      state.dish.dishes.find((dishPage) => dishPage.page === page)?.dishes ?? []
+  const dispatch = useAppDispatch();
+  const category = useAppSelector((state) =>
+    state.store.category.categories.find((item) => item.id === id)
   );
+  const dishCount = category?.dishes.length || 0;
+  const totalPages =
+    dishCount % 10 === 0 ? dishCount / 10 : Math.floor(dishCount / 10) + 1;
+  const start = (page - 1) * 10;
+  const end = start + 10;
+  const dishesPerPage = category?.dishes.slice(start, end);
 
-  const category: FoodCategory = {
-    ...(location.state as FoodCategory),
-  };
   useEffect(() => {
-    async function fetch() {
-      if (currentPageDishes.length === 10) {
-        setLoading(false);
-      } else {
-        setLoading(true);
-        let dishes: Dish[] = [];
-        if (lastPage === 0) {
-          dishes = await getDishes({});
-        } else {
-          dishes = await getDishes({
-            categoryId: category.id,
-            lastDishId: currentPageDishes[-1].id,
-          });
-        }
-        if (dishes.length < 10) {
-          dispatch(lastPageReached(page));
-        } else {
-          dispatch(lastPageReached(page + 1));
-        }
-        dispatch(dishesFetched({ page, dishes }));
-
-        setLoading(false);
-      }
+    if (category?.dishes.length === 0) {
+      console.log("fetching dishes");
+      getDishesByCategory(id)
+        .then((dishes) => {
+          dispatch(categoryDishesFetched({ dishes, categoryId: id }));
+        })
+        .catch((err) => {
+          console.log("error");
+        });
     }
-    fetch();
-    console.log("dish fetched");
   }, []);
+
   return (
     <div className="single-category-page">
-      <div>
-        {currentPageDishes.map((dish) => {
-          return <div>{dish.name}</div>;
-        })}
+      <div className="single-category-container">
+        {dishesPerPage?.map((dish) => (
+          <DishCard dish={dish} key={dish.id} />
+        ))}
       </div>
       <Pagination
         className="pagination-container"
@@ -63,7 +52,7 @@ export default function SingleCategoryPage() {
         }}
         size="medium"
         color="primary"
-        count={pageCount}
+        count={totalPages}
       />
     </div>
   );
