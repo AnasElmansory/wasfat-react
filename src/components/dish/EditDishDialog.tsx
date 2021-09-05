@@ -1,5 +1,5 @@
 import { Dish } from "../../firebase/store/types";
-import { Dialog, TextField } from "@mui/material";
+import { Dialog, TextField, Button, Stack } from "@mui/material";
 import "./EditDishDialog.scss";
 
 interface DialogProps {
@@ -15,19 +15,35 @@ export default function EditDishDialog({
   edit,
 }: DialogProps) {
   return (
-    <Dialog open={open} onClose={close}>
-      <TextField id="dish-name" label="Dish Name"></TextField>
-      <TextField id="dish-subtitle" label="Dish Subtitle"></TextField>
-      <TextField
-        id="dish-ingredients"
-        label="Ingredients"
-        helperText="المكونات"
-      ></TextField>
-      <TextField
-        id="dish-description"
-        label="Description"
-        helperText="طريقه التحضير"
-      ></TextField>
+    <Dialog open={open} onClose={close} fullWidth maxWidth='md'>
+      <Stack spacing={4} className="dish-field-container">
+
+        <TextField className='field' id="dish-name" label="اسم الطبق" margin="dense" />
+        <TextField className='field' id="dish-subtitle" label="وصف الطبق" />
+        <TextField className='field'
+          id="dish-ingredients"
+          label="المكونات"
+          prefix="المكونات"
+        /
+        >
+        <TextField
+          className='field'
+          id="dish-description"
+          label="طريقة التحضير"
+          prefix="طريقه التحضير" /
+        >
+        <Stack
+          className="edit-dish-dialog-action-btn"
+          direction="row"
+          spacing={8}
+          justifyContent="center">
+          <Button color="info" onClick={edit}>
+            Edit
+        </Button>
+          <Button color='warning' onClick={close}>Close</Button>
+        </Stack>
+
+      </Stack>
     </Dialog>
   );
 }

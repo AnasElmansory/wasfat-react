@@ -47,7 +47,7 @@ const categorySlice = createSlice({
         }
       });
     },
-    categoryriorityUpdated(state, action: PayloadAction<FoodCategory>) {
+    categoryPriorityUpdated(state, action: PayloadAction<FoodCategory>) {
       state.categories = state.categories.map((category) => {
         if (category.id === action.payload.id) {
           return action.payload;
@@ -61,7 +61,7 @@ const categorySlice = createSlice({
 
 export const {
   categoriesFetched,
-  categoryriorityUpdated,
+  categoryPriorityUpdated,
   categoryDishesFetched,
 } = categorySlice.actions;
 

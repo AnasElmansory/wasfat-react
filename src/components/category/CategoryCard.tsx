@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useHistory } from "react-router";
 import { FoodCategory } from "../../firebase/store/types";
 import { useAppDispatch } from "../../store/hooks";
-import { categoryriorityUpdated, currentCategoryChanged } from "../../store/categories_slice";
+import { categoryPriorityUpdated } from "../../store/categories_slice";
 import DashDialog from "../dialog/DashDialog";
 
 import "./CategoryCard.scss";
@@ -26,7 +26,6 @@ export default function CategoryCard({
   };
 
   const toSingleCategoryPage = () => {
-    dispatch(currentCategoryChanged(foodCategory))
     history.push(
       `${history.location.pathname}/${foodCategory.id}`
     );
@@ -76,7 +75,7 @@ export default function CategoryCard({
             priority
           );
           if (isUpdated) {
-            dispatch(categoryriorityUpdated(updatedCatgory));
+            dispatch(categoryPriorityUpdated(updatedCatgory));
             setSnackMessage(`Category ${foodCategory.name} Update Failed`);
             setSnackSeverity("success");
           } else {

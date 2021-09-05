@@ -1,3 +1,4 @@
+import { FirebaseError } from "@firebase/util";
 import { firebaseAuth, auth as iAuth } from "./client";
 import isAdmin from "./helper";
 export interface User {
@@ -9,7 +10,7 @@ export interface User {
 }
 
 class Auth {
-  async login(cb: (user: User) => void) {
+  async login(cb: (user: User) => void, onFailed: (error: string) => void) {
     const provider = new firebaseAuth.GoogleAuthProvider();
     provider.addScope("email");
     provider.addScope("profile");
@@ -24,7 +25,14 @@ class Auth {
     };
     if (user.permission !== "user") {
       cb(user);
+    } else {
+      onFailed('you don\'t have admin permission')
     }
+    // try {
+    // } catch (firebaseError) {
+    //   onFailed((firebaseError as FirebaseError).message)
+    //   console.log('error')
+    // }
   }
   async logout(cb: () => void) {
     await firebaseAuth.signOut(iAuth);

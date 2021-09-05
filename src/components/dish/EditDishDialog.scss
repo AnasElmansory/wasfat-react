@@ -1,0 +1,16 @@
+.field{
+    text-align:right;
+    direction:rtl;
+}
+.dish-edit-form{
+    display:flex;
+    flex-direction: column;
+}
+.edit-dish-dialog-action-btn{
+    width: 100%;
+    margin-block:20px;
+}
+.dish-field-container{
+    margin-inline: 8px;
+    margin-block: 16px;
+}
