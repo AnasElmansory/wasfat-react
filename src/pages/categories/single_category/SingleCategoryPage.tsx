@@ -1,42 +1,49 @@
 import { Pagination } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Spinner } from "react-bootstrap";
+import { useParams } from "react-router";
+import DishCard from "../../../components/dish/DishCard";
 import { getDishesByCategory } from "../../../firebase/store/dishes";
-import DishCard from '../../../components/dish_card/DishCard'
-import { categroyDishesFetched } from "../../../store/categories_slice";
+import { categoryDishesFetched } from "../../../store/categories_slice";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import "./SingleCategoryPage.scss";
+
+interface Params {
+  id: string;
+}
+
 export default function SingleCategoryPage() {
+  const { id } = useParams<Params>();
+  const [page, setPage] = useState(1);
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState(true);
-  const category = useAppSelector(state => state.store.category.currentCategory!)
-  const categoryDishPages = (category?.dishes.length || 0) / 10
-  console.log(category?.dishes.length)
-  const [page, setPage] = useState(Math.floor(categoryDishPages));
-  const pageDishes = () => {
-    const start = ((page - 1) * 10)
-    const end = start + 10
-    return category!.dishes.slice(start, end);
-  }
+  const category = useAppSelector((state) =>
+    state.store.category.categories.find((item) => item.id === id)
+  );
+  const dishCount = category?.dishes.length || 0;
+  const totalPages =
+    dishCount % 10 === 0 ? dishCount / 10 : Math.floor(dishCount / 10) + 1;
+  const start = (page - 1) * 10;
+  const end = start + 10;
+  const dishesPerPage = category?.dishes.slice(start, end);
 
   useEffect(() => {
-    async function fetch() {
-      setLoading(true)
-      if (category?.id) {
-        const dishes = await getDishesByCategory(category!.id)
-        dispatch(categroyDishesFetched({ dishes, categoryId: category!.id, page }))
-      }
-      setLoading(false)
+    if (category?.dishes.length === 0) {
+      console.log("fetching dishes");
+      getDishesByCategory(id)
+        .then((dishes) => {
+          dispatch(categoryDishesFetched({ dishes, categoryId: id }));
+        })
+        .catch((err) => {
+          console.log("error");
+        });
     }
-    console.log("dish fetched");
-    fetch();
   }, []);
+
   return (
     <div className="single-category-page">
-      <div className="page-container">
-        {loading ? <Spinner variant="primary" animation="border" /> : pageDishes().map((dish) => {
-          return <DishCard dish={dish} key={dish.id} />
-        })}
+      <div className="single-category-container">
+        {dishesPerPage?.map((dish) => (
+          <DishCard dish={dish} key={dish.id} />
+        ))}
       </div>
       <Pagination
         className="pagination-container"
@@ -45,7 +52,7 @@ export default function SingleCategoryPage() {
         }}
         size="medium"
         color="primary"
-        count={page}
+        count={totalPages}
       />
     </div>
   );

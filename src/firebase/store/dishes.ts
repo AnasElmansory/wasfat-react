@@ -40,12 +40,10 @@ export async function getDishes({
 
 export async function getDishesByCategory(categoryId: string): Promise<Dish[]> {
   const categoryQuery = firestore.query(
-    firestore.collection(store, 'dishes'),
-    firestore.where("categoryId", "array-contains", categoryId),
-    firestore.orderBy("addDate", "desc")
-
-  )
-  const query = await firestore.getDocs(categoryQuery)
+    firestore.collection(store, "dishes"),
+    firestore.where("categoryId", "array-contains", categoryId)
+  );
+  const query = await firestore.getDocs(categoryQuery);
   return query.docs.map((doc) => {
     const data = doc.data();
     const dish: Dish = {

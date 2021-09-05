@@ -1,0 +1,37 @@
+.dish-card {
+    width: 300px;
+    height: 400px;
+    margin: 8px;
+    text-align: right;
+    direction: rtl;
+}
+
+
+.dish-image {
+    width: 100%;
+    height: 40%;
+}
+
+
+
+.dish-title {
+    height: 20%;
+    font-size: 24px;
+    color: #114b0b;
+    font-weight: bold;
+
+}
+
+.dish-subtitle {
+    height: 20%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.dish-actions button {
+    margin-inline: 8px;
+
+}

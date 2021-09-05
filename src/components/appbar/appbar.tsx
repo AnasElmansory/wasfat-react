@@ -1,5 +1,5 @@
 import "./appbar.scss";
-import Icon from "@material-ui/core/Icon";
+import Icon from "@mui/material/Icon";
 
 interface AppbarProps {
   showSidebar: any;

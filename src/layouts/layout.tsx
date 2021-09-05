@@ -32,7 +32,7 @@ export default function Layout(props: any) {
         };
         if (result) {
           dispatch(loggedIn(_user));
-          history.replace("/dashboard/categories");
+          // history.replace("/dashboard/categories");
         }
       }
     });

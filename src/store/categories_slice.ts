@@ -33,26 +33,19 @@ const categorySlice = createSlice({
     categoriesFetched(state, action: PayloadAction<FoodCategory[]>) {
       state.categories = action.payload;
     },
-    categroyDishesFetched(state, action: PayloadAction<CategoryDishPayload>) {
-
-      let category = state.categories.find(category => category.id === action.payload.categoryId);
-      if (category) {
-        category.dishes = category.dishes.concat(...action.payload.dishes);
-        if (action.payload.dishes.length !== category.dishes.length) {
-          for (const _dish of action.payload.dishes)
-            for (const dish of category.dishes) {
-              if (dish.id !== _dish.id)
-                category.dishes.push(_dish)
-            }
+    categoryDishesFetched(
+      state,
+      action: PayloadAction<{ dishes: Dish[]; categoryId: string }>
+    ) {
+      state.categories = state.categories.map((category) => {
+        if (category.id === action.payload.categoryId) {
+          const updatedCateogry = { ...category };
+          updatedCateogry.dishes = action.payload.dishes;
+          return updatedCateogry;
+        } else {
+          return category;
         }
-
-        state.categories = state.categories.map((item) =>
-          item.id === category!.id ? category! : item
-        );
-      }
-      let updatedCategory = { ...state.currentCategory! }
-      updatedCategory.dishes = state.currentCategory?.dishes.concat(action.payload.dishes) || [];
-      state.currentCategory = updatedCategory;
+      });
     },
     categoryriorityUpdated(state, action: PayloadAction<FoodCategory>) {
       state.categories = state.categories.map((category) => {
@@ -66,7 +59,10 @@ const categorySlice = createSlice({
   },
 });
 
-export const { categoriesFetched, categoryriorityUpdated, categroyDishesFetched, currentCategoryChanged } =
-  categorySlice.actions;
+export const {
+  categoriesFetched,
+  categoryriorityUpdated,
+  categoryDishesFetched,
+} = categorySlice.actions;
 
 export default categorySlice.reducer;
