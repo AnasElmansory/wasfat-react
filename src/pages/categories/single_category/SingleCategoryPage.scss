@@ -7,13 +7,21 @@
     justify-content: space-evenly;
 }
 
-.single-category-container {
+.page-container{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-evenly;
+    flex-flow:wrap;
     height: calc(100% - (20px + 56px));
+    position:relative;
+}
+
+.single-category-container {
+    position: relative;
 }
 
 .pagination-container {
     position: fixed;
-    bottom: 25px;
-    color: red;
+    bottom: 16px;
 
 }

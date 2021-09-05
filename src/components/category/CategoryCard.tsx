@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useHistory } from "react-router";
 import { FoodCategory } from "../../firebase/store/types";
 import { useAppDispatch } from "../../store/hooks";
-import { categoryriorityUpdated } from "../../store/categories_slice";
+import { categoryriorityUpdated, currentCategoryChanged } from "../../store/categories_slice";
 import DashDialog from "../dialog/DashDialog";
 
 import "./CategoryCard.scss";
@@ -26,9 +26,9 @@ export default function CategoryCard({
   };
 
   const toSingleCategoryPage = () => {
+    dispatch(currentCategoryChanged(foodCategory))
     history.push(
-      `${history.location.pathname}/${foodCategory.id}`,
-      foodCategory
+      `${history.location.pathname}/${foodCategory.id}`
     );
   };
 

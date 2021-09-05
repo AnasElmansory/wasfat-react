@@ -7,9 +7,9 @@ import LoadingPage from "./pages/LoadingPage";
 import CategoryPage from "./pages/categories/CategoryPage";
 import routes from "./utils/routes";
 
-export interface AppProps {}
+export interface AppProps { }
 
-export interface AppState {}
+export interface AppState { }
 
 interface RouteProps {
   path: string;

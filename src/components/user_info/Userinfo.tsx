@@ -3,7 +3,7 @@ import { useAppSelector } from "../../store/hooks";
 import "./userinfo.css";
 
 export default function UserInfo() {
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppSelector((state) => state.store.auth.user);
 
   return (
     <div className="userinfo">
