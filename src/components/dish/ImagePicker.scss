@@ -1,0 +1,27 @@
+.image-picker-container {
+    height: 250px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    background-color: #eee;
+    border-radius: 10px;
+    padding: 8px;
+}
+
+
+.picker-image {
+    height: 80%;
+    text-align: center;
+
+    img {
+        width: 100%;
+        max-height: 100%;
+    }
+}
+
+.picker-actions {
+    height: 20%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}

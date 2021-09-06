@@ -1,16 +1,14 @@
-.field{
-    text-align:right;
-    direction:rtl;
+.edit-dish-dialog-action-btn {
+    margin-block: 24px;
+    display: flex;
+    justify-content: space-evenly;
 }
-.dish-edit-form{
-    display:flex;
-    flex-direction: column;
-}
-.edit-dish-dialog-action-btn{
-    width: 100%;
-    margin-block:20px;
-}
-.dish-field-container{
-    margin-inline: 8px;
+
+
+.edit-dish-dialog-container {
     margin-block: 16px;
+    text-align: right;
+    direction: rtl;
 }
+
+.field {}
