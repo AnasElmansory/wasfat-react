@@ -32,42 +32,25 @@ export default function EditDishDialog({
     display: "flex",
     justifyContent: "space-evenly",
     flexFlow: "wrap",
+    marginBlock: "8px",
   };
-  const formGroup: CSSProperties = {
+  const formField: CSSProperties = {
     width: "40%",
     color: "#114b0b",
   };
   return (
     <Dialog open={open} onClose={close} fullWidth maxWidth="md">
       <Container className="edit-dish-dialog-container">
-        <Form>
+        <form>
           <div style={formRow}>
-            <Form.Group style={formGroup}>
-              <Form.Label>اسم الطبق</Form.Label>
-              <Form.Control as="textarea" defaultValue={name}></Form.Control>
-            </Form.Group>
-            <Form.Group style={formGroup}>
-              <Form.Label>وصف الطبق</Form.Label>
-              <Form.Control
-                as="textarea"
-                defaultValue={subtitle}
-              ></Form.Control>
-            </Form.Group>
+            <input type="text" name="اسم الطبق" id="dish-name" className="edit-dish-field" />
+            <input type="text" name="اسم الطبق" id="dish-name" className="edit-dish-field" />
           </div>
           <div style={formRow}>
-            <Form.Group style={formGroup}>
-              <Form.Label>المكونات</Form.Label>
-              <Form.Control defaultValue={description}></Form.Control>
-            </Form.Group>
-            <Form.Group style={formGroup}>
-              <Form.Label>طريقة التحضير</Form.Label>
-              <Form.Control
-                as="textarea"
-                defaultValue="طريقة التحضير"
-              ></Form.Control>
-            </Form.Group>
+            <input type="text" name="اسم الطبق" id="dish-name" className="edit-dish-field" />
+            <input type="text" name="اسم الطبق" id="dish-name" className="edit-dish-field" />
           </div>
-        </Form>
+        </form>
         <div
           style={{
             display: "flex",
