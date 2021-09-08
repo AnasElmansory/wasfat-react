@@ -83,6 +83,24 @@ export default function EditDishDialog({
     }
   }
 
+  function generateDishDescription():string{
+   const filteredIngredients = ingredients.replace(/(المكونات|المقادير|المكوّنات)/,"").trim();
+   const filteredSteps = description.replace(/(طريقه التحضير|طريقة التحضير|الخطوات)/,"").trim();
+   // to html ingredients
+   const ingredientsHeading = '<h2>المكونات</h2>\n';
+   const stepsHeading = "<h2>طريقة التحضير</h2>\n";
+
+   const ingredientsHtmlItems =  filteredIngredients.split('\n').map(line=>
+     `<p>${line.trim()}</p>`).join('\n');
+     const ingredientsHtml = `${ingredientsHeading}${ingredientsHtmlItems}`;
+    
+   //to html steps
+   // from image list to img tag in steps html
+  }
+
+  function onDishEdit(){
+
+  }
 
 
   function updateDishImages(image: string, index: number) {

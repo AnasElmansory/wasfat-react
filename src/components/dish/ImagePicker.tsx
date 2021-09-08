@@ -71,10 +71,10 @@ export function ImagePicker({
       setUploadingState(true);
       const path = `${categoryId}/${dishId}/${file.name}`;
       console.log(path);
-      const ref = fireStorage.ref(storage, path)
-      const uploadResult = await fireStorage.uploadBytes(ref, await file.arrayBuffer());
-      const downloadUrl = await fireStorage.getDownloadURL(uploadResult.ref)
-      callbacks.updateDishImages(downloadUrl, index);
+      // const ref = fireStorage.ref(storage, path)
+      // const uploadResult = await fireStorage.uploadBytes(ref, await file.arrayBuffer());
+      // const downloadUrl = await fireStorage.getDownloadURL(uploadResult.ref)
+      // callbacks.updateDishImages(downloadUrl, index);
       // callback to set dishimages
     }
   }
@@ -104,10 +104,13 @@ export function ImagePicker({
             <Image />
           </IconButton>
         </FilePicker>
-        <IconButton color="success">
+        <IconButton color="success" disabled={!currentImageFile?true: false} onClick={uploadImage}>
           <CloudUpload />
         </IconButton>
-        <Spinner animation="border" variant="primary" />
+        {(isUploading) ?
+          <Spinner animation="border" variant="primary" /> :
+          <div style={{ height: '46px', width: "46px" }}></div>
+        }
       </div>
     </div>
   );
