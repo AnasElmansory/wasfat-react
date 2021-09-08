@@ -1,16 +1,9 @@
 import { Dish } from "../../firebase/store/types";
-import {
-  Dialog,
-  TextField,
-  Button,
-  Stack,
-  Container,
-  FilledInput,
-} from "@mui/material";
-import { Form } from "react-bootstrap";
+import { Dialog, TextField, Button, InputLabelProps } from "@mui/material";
+
 import "./EditDishDialog.scss";
-import ImagePicker from "./ImagePicker";
-import { useState, CSSProperties } from "react";
+import ImagePickerContainer from "./ImagePicker";
+import { useState } from "react";
 
 interface DialogProps {
   dish: Dish;
@@ -24,62 +17,131 @@ export default function EditDishDialog({
   close,
   edit,
 }: DialogProps) {
+  const inputProps: InputLabelProps = {
+    color: "warning",
+    sx: { fontSize: "24px" },
+  };
+
   const [name, setName] = useState(dish.name);
   const [subtitle, setSubtitle] = useState(dish.subtitle);
-  const [description, setDescription] = useState(dish.dishDescription);
+  const [ingredients, setIngredients] = useState(
+    getIngredients(dish.dishDescription)
+  );
   const [dishImages, setDishImages] = useState(dish.dishImages);
-  const formRow: CSSProperties = {
-    display: "flex",
-    justifyContent: "space-evenly",
-    flexFlow: "wrap",
-  };
-  const formGroup: CSSProperties = {
-    width: "40%",
-    color: "#114b0b",
-  };
+  const [description, setDescription] = useState(
+    getDescription(dish.dishDescription)
+  );
+
+  function formatDescription(description: string): string | null {
+    const stepsExp = /((<h2>)(الخطوات|طريقه التحضير|طريقة التحضير)(<\/h2>))/g;
+    const result = description.match(stepsExp);
+    return result != null ? result[0] : null;
+  }
+
+  function extractText(html: string): string {
+    return html
+      .replaceAll(/(<h2>)|(<p>)|(" ")/g, "")
+      .replaceAll(/(<\/h2>)|(<\/p>)|(" ")/g, "")
+      .trim();
+  }
+
+  function extractImages(text: string) {
+    const imgExp = /(<img\s*src\s*=\s*)(https)([a-zA-Z0-9@:\/.\-%_?=&>])*/g;
+    const result = text.match(imgExp);
+    if (result != null) {
+      for (const image of result) {
+        text = text.replace(image, `image${result.indexOf(image + 1)}`);
+      }
+      return text;
+    } else {
+      return text;
+    }
+  }
+
+  function getIngredients(description: string): string {
+    const formatedDescription = formatDescription(description);
+    if (formatedDescription != null) {
+      const endIndex = description.indexOf(formatedDescription);
+      const ingredientsHtml = description.substring(0, endIndex);
+      const ingredientsString = extractText(ingredientsHtml);
+      return ingredientsString;
+    } else {
+      return "Ingredients Format Error";
+    }
+  }
+
+  function getDescription(description: string): string {
+    const formatedDescription = formatDescription(description);
+    if (formatedDescription != null) {
+      const startIndex = description.indexOf(formatedDescription);
+      const descriptionHtml = description.substring(startIndex);
+      const descriptionString = extractText(descriptionHtml);
+      const finalDescriptionString = extractImages(descriptionString);
+      return finalDescriptionString;
+    } else {
+      return "Description Format Error";
+    }
+  }
+
   return (
-    <Dialog open={open} onClose={close} fullWidth maxWidth="md">
-      <Container className="edit-dish-dialog-container">
-        <Form>
-          <div style={formRow}>
-            <Form.Group style={formGroup}>
-              <Form.Label>اسم الطبق</Form.Label>
-              <Form.Control as="textarea" defaultValue={name}></Form.Control>
-            </Form.Group>
-            <Form.Group style={formGroup}>
-              <Form.Label>وصف الطبق</Form.Label>
-              <Form.Control
-                as="textarea"
-                defaultValue={subtitle}
-              ></Form.Control>
-            </Form.Group>
-          </div>
-          <div style={formRow}>
-            <Form.Group style={formGroup}>
-              <Form.Label>المكونات</Form.Label>
-              <Form.Control defaultValue={description}></Form.Control>
-            </Form.Group>
-            <Form.Group style={formGroup}>
-              <Form.Label>طريقة التحضير</Form.Label>
-              <Form.Control
-                as="textarea"
-                defaultValue="طريقة التحضير"
-              ></Form.Control>
-            </Form.Group>
-          </div>
-        </Form>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-evenly",
-            flexWrap: "wrap",
-            marginBlock: "16px",
-          }}
-        >
-          <ImagePicker image={dishImages[0]}></ImagePicker>
-          <ImagePicker image={dishImages[1]}></ImagePicker>
-          <ImagePicker image={dishImages[2]}></ImagePicker>
+    <Dialog
+      className="edit-dish-dialog"
+      open={open}
+      onClose={close}
+      fullWidth
+      maxWidth="md"
+    >
+      <div className="edit-dish-dialog-container">
+        <div className="form-row">
+          <TextField
+            className="edit-dish-field"
+            variant="filled"
+            label="اسم الطبق"
+            InputLabelProps={inputProps}
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            multiline
+            color="warning"
+          />
+          <TextField
+            className="edit-dish-field"
+            variant="filled"
+            label="وصف الطبق"
+            InputLabelProps={inputProps}
+            value={subtitle}
+            onChange={(event) => setSubtitle(event.target.value)}
+            fullWidth
+            multiline
+            color="warning"
+          />
         </div>
+        <div className="form-row">
+          <TextField
+            id="dish-ingredients"
+            className="edit-dish-field"
+            variant="filled"
+            label="المكونات"
+            value={ingredients}
+            onChange={(event) => setIngredients(event.target.value)}
+            multiline
+            InputLabelProps={inputProps}
+            fullWidth
+            color="warning"
+          />
+          <TextField
+            className="edit-dish-field"
+            label="طريقة التحضير"
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
+            variant="filled"
+            InputLabelProps={inputProps}
+            fullWidth
+            multiline
+            color="warning"
+          />
+        </div>
+
+        <ImagePickerContainer images={dishImages} />
 
         <div className="edit-dish-dialog-action-btn">
           <Button color="info" onClick={edit}>
@@ -89,7 +151,7 @@ export default function EditDishDialog({
             Close
           </Button>
         </div>
-      </Container>
+      </div>
     </Dialog>
   );
 }

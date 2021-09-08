@@ -11,4 +11,22 @@
     direction: rtl;
 }
 
-.field {}
+.edit-dish-dialog {
+    direction: rtl;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-evenly;
+    margin-block: 16px;
+    flex-flow: wrap;
+}
+
+.edit-dish-field {
+    width: 40% !important;
+
+    @media screen and (max-width: 400px) {
+        width: 80% !important;
+        margin-bottom: 16px !important;
+    }
+}
