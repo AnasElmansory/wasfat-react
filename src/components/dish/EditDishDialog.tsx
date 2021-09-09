@@ -1,9 +1,25 @@
 import { Dish } from "../../firebase/store/types";
-import { Dialog, TextField, Button, InputLabelProps } from "@mui/material";
+import {
+  extractImages,
+  extractText,
+  formatDescription,
+  getDescription,
+  getIngredients,
+} from "../../utils/dish_helper";
+import {
+  Dialog,
+  TextField,
+  Button,
+  InputLabelProps,
+  Snackbar,
+  Alert,
+  AlertColor,
+} from "@mui/material";
 
 import "./EditDishDialog.scss";
 import ImagePickerContainer from "./ImagePicker";
 import { useState } from "react";
+import { firestore, store } from "../../firebase/client";
 
 interface DialogProps {
   dish: Dish;
@@ -22,6 +38,10 @@ export default function EditDishDialog({
     sx: { fontSize: "24px" },
   };
 
+  const [openSnackbar, setOpenSnack] = useState<boolean>(false);
+  const [snackbarColor, setSnackColor] = useState<AlertColor>("success");
+  const [snackbarEvent, setSnackEvent] = useState<string>("");
+
   const [name, setName] = useState(dish.name);
   const [subtitle, setSubtitle] = useState(dish.subtitle);
   const [ingredients, setIngredients] = useState(
@@ -32,85 +52,69 @@ export default function EditDishDialog({
     getDescription(dish.dishDescription)
   );
 
-  function formatDescription(description: string): string | null {
-    const stepsExp = /((<h2>)(الخطوات|طريقه التحضير|طريقة التحضير)(<\/h2>))/g;
-    const result = description.match(stepsExp);
-    return result != null ? result[0] : null;
-  }
-
-  function extractText(html: string): string {
-    return html
-      .replaceAll(/(<h2>)|(<p>)|(" ")/g, "")
-      .replaceAll(/(<\/h2>)|(<\/p>)|(" ")/g, "")
+  function generateDishDescription(): string {
+    const filteredIngredients = ingredients
+      .replace(/(المكونات|المقادير|المكوّنات)/, "")
       .trim();
+    const filteredSteps = description
+      .replace(/(طريقه التحضير|طريقة التحضير|الخطوات)/, "")
+      .trim();
+
+    const ingredientsHtml =
+      "<h2>المكونات</h2>\n" +
+      filteredIngredients
+        .split("\n")
+        .map((line) => `<p>${line.trim()}</p>`)
+        .join("\n");
+
+    const descriptionHtml =
+      "<h2>طريقة التحضير</h2>\n" +
+      filteredSteps
+        .split("\n")
+        .map((line) => {
+          if (line.includes("image")) {
+            const imageIndex = Number.parseInt(line.trim().charAt(5));
+            return line.replace(
+              /image([0-2])/,
+              `<img src= "${dishImages[imageIndex - 1]}">`
+            );
+          } else {
+            return `<p>${line.trim()}</p>`;
+          }
+        })
+        .join("\n");
+    const dishDescription = `${ingredientsHtml}\n${descriptionHtml}`;
+    return dishDescription;
   }
 
-  function extractImages(text: string) {
-    const imgExp = /(<img\s*src\s*=\s*)(https)([a-zA-Z0-9@:\/.\-%_?=&>])*/g;
-    const result = text.match(imgExp);
-    if (result != null) {
-      for (const image of result) {
-        text = text.replace(image, `image${result.indexOf(image + 1)}`);
-      }
-      return text;
-    } else {
-      return text;
+  async function onDishEdit() {
+    const updatedDish: Dish = {
+      ...dish,
+    };
+    updatedDish.name = name;
+    updatedDish.subtitle = subtitle;
+    updatedDish.dishImages = dishImages;
+    updatedDish.dishDescription = generateDishDescription();
+    const dishRef = firestore.doc(store, "dishes", dish.id);
+    try {
+      await firestore.updateDoc(dishRef, { ...updatedDish });
+      setSnackColor("success");
+      setSnackEvent(`Dish ${updatedDish.name} updated successfully!`);
+    } catch (e: any) {
+      setSnackColor("error");
+      setSnackEvent(`something went wrong ${e.toString()}`);
     }
+    setOpenSnack(true);
   }
-
-  function getIngredients(description: string): string {
-    const formatedDescription = formatDescription(description);
-    if (formatedDescription != null) {
-      const endIndex = description.indexOf(formatedDescription);
-      const ingredientsHtml = description.substring(0, endIndex);
-      const ingredientsString = extractText(ingredientsHtml);
-      return ingredientsString;
-    } else {
-      return "Ingredients Format Error";
-    }
-  }
-
-  function getDescription(description: string): string {
-    const formatedDescription = formatDescription(description);
-    if (formatedDescription != null) {
-      const startIndex = description.indexOf(formatedDescription);
-      const descriptionHtml = description.substring(startIndex);
-      const descriptionString = extractText(descriptionHtml);
-      const finalDescriptionString = extractImages(descriptionString);
-      return finalDescriptionString;
-    } else {
-      return "Description Format Error";
-    }
-  }
-
-  function generateDishDescription():string{
-   const filteredIngredients = ingredients.replace(/(المكونات|المقادير|المكوّنات)/,"").trim();
-   const filteredSteps = description.replace(/(طريقه التحضير|طريقة التحضير|الخطوات)/,"").trim();
-   // to html ingredients
-   const ingredientsHeading = '<h2>المكونات</h2>\n';
-   const stepsHeading = "<h2>طريقة التحضير</h2>\n";
-
-   const ingredientsHtmlItems =  filteredIngredients.split('\n').map(line=>
-     `<p>${line.trim()}</p>`).join('\n');
-     const ingredientsHtml = `${ingredientsHeading}${ingredientsHtmlItems}`;
-    
-   //to html steps
-   // from image list to img tag in steps html
-  }
-
-  function onDishEdit(){
-
-  }
-
 
   function updateDishImages(image: string, index: number) {
     const newDishImages = dishImages.map((img, imgIndex) => {
       if (imgIndex === index) {
         return image;
       } else {
-        return img
+        return img;
       }
-    })
+    });
     setDishImages(newDishImages);
   }
   return (
@@ -158,6 +162,7 @@ export default function EditDishDialog({
             fullWidth
             color="warning"
           />
+
           <TextField
             className="edit-dish-field"
             label="طريقة التحضير"
@@ -179,7 +184,7 @@ export default function EditDishDialog({
         />
 
         <div className="edit-dish-dialog-action-btn">
-          <Button color="info" onClick={edit}>
+          <Button color="info" onClick={onDishEdit}>
             Edit
           </Button>
           <Button color="warning" onClick={close}>
@@ -187,6 +192,16 @@ export default function EditDishDialog({
           </Button>
         </div>
       </div>
+
+      <Snackbar
+        open={openSnackbar}
+        onClose={() => setOpenSnack(false)}
+        autoHideDuration={6000}
+      >
+        <Alert severity={snackbarColor} variant="filled">
+          {snackbarEvent}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 }
