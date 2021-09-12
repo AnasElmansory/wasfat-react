@@ -1,0 +1,22 @@
+.dishes-page {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+}
+
+.dishes-container {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+    margin-top: 8px;
+    margin-bottom: 60px;
+}
+
+#dishes-pagination {
+    background-color: #eee;
+    padding: 0px 4px 4px 4px;
+    border-radius: 15px;
+    position: fixed;
+    bottom: 16px;
+    margin-inline: 4px
+}

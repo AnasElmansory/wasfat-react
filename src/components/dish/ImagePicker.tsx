@@ -18,10 +18,10 @@ interface ImagePickerProps {
 }
 
 interface ImagesContainerProps {
-  images: string[];
-  dishId: string;
-  categoryId: string;
-  updateDishImages: (image: string, index: number) => void;
+  images?: string[];
+  dishId?: string;
+  categoryId?: string;
+  updateDishImages?: (image: string, index: number) => void;
 }
 
 export function ImagePicker({
@@ -133,19 +133,21 @@ export default function ImagePickerContainer({
   const onSnackClose = () => setSnackOpen(false);
   return (
     <div className="edit-dish-images-picker">
-      {[0, 1, 2].map((imageIndex) => (
-        <ImagePicker
-          key={imageIndex}
-          image={images[imageIndex]}
-          index={imageIndex}
-          dishId={dishId}
-          categoryId={categoryId}
-          updateDishImages={updateDishImages}
-          openSnackbar={() => setSnackOpen(true)}
-          setSnackColor={(color) => setSnackColor(color)}
-          setSnackEvent={(event) => setSnackEvent(event)}
-        />
-      ))}
+      {[0, 1, 2].map((imageIndex) =>
+        !categoryId || !images || !dishId || !updateDishImages ? null : (
+          <ImagePicker
+            key={imageIndex}
+            image={images[imageIndex]}
+            index={imageIndex}
+            dishId={dishId}
+            categoryId={categoryId}
+            updateDishImages={updateDishImages}
+            openSnackbar={() => setSnackOpen(true)}
+            setSnackColor={(color) => setSnackColor(color)}
+            setSnackEvent={(event) => setSnackEvent(event)}
+          />
+        )
+      )}
 
       <Snackbar
         open={openSnackbar}

@@ -8,9 +8,9 @@ import CategoryPage from "./pages/categories/CategoryPage";
 import routes from "./utils/routes";
 import Dashboard from "./pages/dashboard/Dashboard";
 
-export interface AppProps { }
+export interface AppProps {}
 
-export interface AppState { }
+export interface AppState {}
 
 interface RouteProps {
   path: string;
@@ -52,7 +52,11 @@ class App extends React.Component<AppProps, AppState> {
                         </Route>
                         {route.children?.map((childRoute) => {
                           return (
-                            <Route path={childRoute.path} key={childRoute.name}>
+                            <Route
+                              exact
+                              path={childRoute.path}
+                              key={childRoute.name}
+                            >
                               {childRoute.component}
                             </Route>
                           );

@@ -1,4 +1,5 @@
 import { IconButton, Icon, Snackbar } from "@mui/material";
+import { Edit, List } from "@mui/icons-material";
 import { useState } from "react";
 import { useHistory } from "react-router";
 import { FoodCategory } from "../../firebase/store/types";
@@ -21,14 +22,26 @@ export default function CategoryCard({
   const [snackMessage, setSnackMessage] = useState("");
   const [severity, setSnackSeverity] = useState<AlertColor>("success");
   const dispatch = useAppDispatch();
-  const editCategory = () => {
-    setOpenDialog(true);
+  const openCategoryPriorityEdit = () => setOpenDialog(true);
+  const onEditPriority = async (priority: number) => {
+    const updatedCatgory: FoodCategory = {
+      ...foodCategory,
+    };
+    updatedCatgory.priortiy = priority;
+    const isUpdated = await updateCategoryPriority(foodCategory.id, priority);
+    if (isUpdated) {
+      dispatch(categoryPriorityUpdated(updatedCatgory));
+      setSnackMessage(`Category ${foodCategory.name} Update Failed`);
+      setSnackSeverity("success");
+    } else {
+      setSnackMessage(`Category ${foodCategory.name} Update Failed`);
+      setSnackSeverity("error");
+    }
+    setOpenSnackbar(true);
   };
 
   const toSingleCategoryPage = () => {
-    history.push(
-      `${history.location.pathname}/${foodCategory.id}`
-    );
+    history.push(`${history.location.pathname}/${foodCategory.id}`);
   };
 
   return (
@@ -46,44 +59,24 @@ export default function CategoryCard({
       <div className="category-action-btns">
         <IconButton
           className="category-btn category-edit-btn"
-          onClick={editCategory}
+          onClick={openCategoryPriorityEdit}
         >
-          <Icon>edit</Icon>
+          <Edit color="info" />
         </IconButton>
 
         <IconButton
-          className="category-btn category-details-btn"
+          className="category-btn category-details-btn "
           onClick={toSingleCategoryPage}
         >
-          <Icon>list</Icon>
+          <List color="warning" />
         </IconButton>
       </div>
       <DashDialog
         openDialog={openDialog}
         categoryPriority={foodCategory.priortiy}
         categoryName={foodCategory.name}
-        onCloseDialog={() => {
-          setOpenDialog(false);
-        }}
-        onEdit={async (priority) => {
-          const updatedCatgory: FoodCategory = {
-            ...foodCategory,
-          };
-          updatedCatgory.priortiy = priority;
-          const isUpdated = await updateCategoryPriority(
-            foodCategory.id,
-            priority
-          );
-          if (isUpdated) {
-            dispatch(categoryPriorityUpdated(updatedCatgory));
-            setSnackMessage(`Category ${foodCategory.name} Update Failed`);
-            setSnackSeverity("success");
-          } else {
-            setSnackMessage(`Category ${foodCategory.name} Update Failed`);
-            setSnackSeverity("error");
-          }
-          setOpenSnackbar(true);
-        }}
+        onCloseDialog={() => setOpenDialog(false)}
+        onEdit={onEditPriority}
       />
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
@@ -93,9 +86,7 @@ export default function CategoryCard({
         key={foodCategory.id}
       >
         <Alert
-          onClose={() => {
-            setOpenSnackbar(false);
-          }}
+          onClose={() => setOpenSnackbar(false)}
           severity={severity}
           variant="filled"
           elevation={6}

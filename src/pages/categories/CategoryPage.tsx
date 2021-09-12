@@ -23,7 +23,6 @@ export default function CategoryPage() {
       }
     }
     fetch();
-    console.log("fetching categories");
   }, []);
 
   return (

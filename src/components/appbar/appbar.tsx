@@ -1,5 +1,6 @@
 import "./appbar.scss";
-import Icon from "@mui/material/Icon";
+import { IconButton } from "@mui/material";
+import { Menu, Close } from "@mui/icons-material";
 
 interface AppbarProps {
   showSidebar: any;
@@ -12,7 +13,9 @@ export default function Appbar({ showSidebar, sidebarActive }: AppbarProps) {
   return (
     <div className="appbar">
       <div className="icon">
-        <Icon onClick={showSidebar}>{sidebarActive ? "close" : "menu"}</Icon>
+        <IconButton onClick={showSidebar} id='app-bar-drawer'>
+          {sidebarActive ? <Close /> : <Menu />}
+        </IconButton>
       </div>
       <div className="title">
         <span>{title}</span>

@@ -19,28 +19,23 @@ import {
 import "./EditDishDialog.scss";
 import ImagePickerContainer from "./ImagePicker";
 import { useState } from "react";
-import { firestore, store } from "../../firebase/client";
 
 interface DialogProps {
   dish: Dish;
   open: boolean;
   close: () => void;
-  edit: () => void;
+  onEdit: (updatedDish: Dish) => void;
 }
 export default function EditDishDialog({
   dish,
   open,
   close,
-  edit,
+  onEdit,
 }: DialogProps) {
   const inputProps: InputLabelProps = {
     color: "warning",
     sx: { fontSize: "24px" },
   };
-
-  const [openSnackbar, setOpenSnack] = useState<boolean>(false);
-  const [snackbarColor, setSnackColor] = useState<AlertColor>("success");
-  const [snackbarEvent, setSnackEvent] = useState<string>("");
 
   const [name, setName] = useState(dish.name);
   const [subtitle, setSubtitle] = useState(dish.subtitle);
@@ -95,16 +90,7 @@ export default function EditDishDialog({
     updatedDish.subtitle = subtitle;
     updatedDish.dishImages = dishImages;
     updatedDish.dishDescription = generateDishDescription();
-    const dishRef = firestore.doc(store, "dishes", dish.id);
-    try {
-      await firestore.updateDoc(dishRef, { ...updatedDish });
-      setSnackColor("success");
-      setSnackEvent(`Dish ${updatedDish.name} updated successfully!`);
-    } catch (e: any) {
-      setSnackColor("error");
-      setSnackEvent(`something went wrong ${e.toString()}`);
-    }
-    setOpenSnack(true);
+    onEdit(updatedDish);
   }
 
   function updateDishImages(image: string, index: number) {
@@ -179,7 +165,7 @@ export default function EditDishDialog({
         <ImagePickerContainer
           images={dishImages}
           dishId={dish.id}
-          categoryId={dish.categoryId[0]}
+          categoryId={!dish.categoryId ? undefined : dish.categoryId[0]}
           updateDishImages={updateDishImages}
         />
 
@@ -192,16 +178,6 @@ export default function EditDishDialog({
           </Button>
         </div>
       </div>
-
-      <Snackbar
-        open={openSnackbar}
-        onClose={() => setOpenSnack(false)}
-        autoHideDuration={6000}
-      >
-        <Alert severity={snackbarColor} variant="filled">
-          {snackbarEvent}
-        </Alert>
-      </Snackbar>
     </Dialog>
   );
 }

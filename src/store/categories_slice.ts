@@ -3,16 +3,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface CategoryState {
   categories: FoodCategory[];
-  currentCategory?: FoodCategory;
-  categoryLastPage: number
-
 }
 
-interface CategoryDishPayload {
-  dishes: Dish[],
-  categoryId: string
-  page: number;
-
+interface DeleteAction {
+  categoryId: string[];
+  dishId: string;
 }
 
 const categorySlice = createSlice({
@@ -23,13 +18,6 @@ const categorySlice = createSlice({
     categoryLastPage: -1,
   } as CategoryState,
   reducers: {
-    currentCategoryChanged(state, action: PayloadAction<FoodCategory>) {
-      if (state.currentCategory?.id !== action.payload.id) {
-
-        state.categoryLastPage = 0;
-      }
-      state.currentCategory = action.payload;
-    },
     categoriesFetched(state, action: PayloadAction<FoodCategory[]>) {
       state.categories = action.payload;
     },
@@ -56,6 +44,18 @@ const categorySlice = createSlice({
         }
       });
     },
+    categoryDishDeleted(state, action: PayloadAction<DeleteAction>) {
+      state.categories = state.categories.map((category) => {
+        action.payload.categoryId.forEach((id) => {
+          if (category.id === id) {
+            category.dishes = category.dishes.filter(
+              (dish) => dish.id !== action.payload.dishId
+            );
+          }
+        });
+        return category;
+      });
+    },
   },
 });
 
@@ -63,6 +63,7 @@ export const {
   categoriesFetched,
   categoryPriorityUpdated,
   categoryDishesFetched,
+  categoryDishDeleted,
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

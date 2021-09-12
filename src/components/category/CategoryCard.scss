@@ -1,3 +1,5 @@
+@import '../../global.scss';
+
 .category-card {
     height: 300px;
     width: 250px;
@@ -7,10 +9,9 @@
     padding-bottom: 8px;
     text-align: center;
     flex-direction: column;
-    box-shadow: 0px 2px 3px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 3px 4px 2px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     user-select: none;
-
 }
 
 .category-image {

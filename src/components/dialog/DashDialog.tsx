@@ -6,10 +6,10 @@ import "./DashDialog.scss";
 
 interface DashDialogProps {
   openDialog: boolean;
-  onCloseDialog: () => void;
-  categoryPriority: number;
   categoryName: string;
+  categoryPriority: number;
   onEdit: (value: number) => void;
+  onCloseDialog: () => void;
 }
 
 export default function DashDialog({
@@ -37,14 +37,19 @@ export default function DashDialog({
         <h4>Enter New Priority</h4>
         <TextField
           value={input}
-          onChange={(event) => {
-            setInput(Number.parseInt(event.target.value));
-          }}
           autoFocus
-          margin="dense"
-          label="Category priority"
-          type="number"
           fullWidth
+          type="number"
+          margin="dense"
+          variant="filled"
+          label="Category priority"
+          onChange={(event) =>
+            setInput(
+              Number.parseInt(
+                event.target.value == "" ? "0" : event.target.value
+              )
+            )
+          }
         />
       </Modal.Body>
       <Modal.Footer>

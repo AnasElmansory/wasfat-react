@@ -1,11 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Dish, Rating } from "../firebase/store/types";
+import { Dish } from "../firebase/store/types";
 
 interface DishState {
-  dishes: PaginatedDishesFetch[];
-  lastPage: number;
+  dishes: DishPage[];
+  lastDoc: Dish | undefined;
+  lastPage: number | undefined;
 }
-export interface PaginatedDishesFetch {
+
+interface DeleteDishProps {
+  page: number;
+  dishId: string;
+}
+
+export interface DishPage {
   page: number;
   dishes: Dish[];
 }
@@ -13,19 +20,37 @@ export interface PaginatedDishesFetch {
 const dishSlice = createSlice({
   name: "dish",
   initialState: {
-    lastPage: 0,
+    lastDoc: undefined,
+    lastPage: undefined,
     dishes: [],
   } as DishState,
   reducers: {
-    dishesFetched(state, action: PayloadAction<PaginatedDishesFetch>) {
-      state.dishes.push(action.payload);
+    clear(state) {
+      state.dishes = [];
+      state.lastPage = undefined;
+      state.lastDoc = undefined;
     },
-    lastPageReached(state, action: PayloadAction<number>) {
-      state.lastPage = action.payload;
+    dishDeleted(state, action: PayloadAction<DeleteDishProps>) {
+      state.dishes[action.payload.page - 1].dishes = state.dishes[
+        action.payload.page - 1
+      ].dishes.filter((dish) => dish.id !== action.payload.dishId);
+    },
+    dishPageFetched(state, action: PayloadAction<DishPage>) {
+      if (action.payload.dishes.length < 10) {
+        state.lastPage = action.payload.page;
+      }
+      state.lastDoc = action.payload.dishes[action.payload.dishes.length - 1];
+      const dishPage: DishPage = {
+        dishes: action.payload.dishes,
+        page: action.payload.page,
+      };
+      if (state.dishes.length < dishPage.page) {
+        state.dishes.push(dishPage);
+      }
     },
   },
 });
 
-export const { dishesFetched, lastPageReached } = dishSlice.actions;
+export const { dishPageFetched, dishDeleted, clear } = dishSlice.actions;
 
 export default dishSlice.reducer;

@@ -1,4 +1,5 @@
-export function formatDescription(description: string): string | null {
+export function formatDescription(description?: string): string | null {
+  if (!description) return null;
   const stepsExp = /((<h2>)(الخطوات|طريقه التحضير|طريقة التحضير)(<\/h2>))/g;
   const result = description.match(stepsExp);
   return result != null ? result[0] : null;

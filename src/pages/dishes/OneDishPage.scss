@@ -1,10 +1,52 @@
+@import "../../_global.scss";
+
 .one-dish-details {
-    height: 350px;
-    width: 75%;
+    width: 85%;
     margin: auto;
+    min-height: 200px;
+    height: fit-content;
+    margin-block: 15px;
+    text-align: right;
+    direction: rtl;
+
+
 }
+
+#one-dish-image {
+    width: 50%;
+    height: fit-content;
+
+
+}
+
+#one-dish-name {
+    color: $primaryColor;
+}
+
+#one-dish-subtitle {
+    font-size: 18px;
+}
+
+
 
 .one-dish-description {
     margin: auto;
     width: 75%;
+    text-align: right;
+    direction: rtl;
+}
+
+.one-dish-description h2 {
+    font-weight: 600;
+    margin-block: 16px;
+    color: $primaryColor;
+}
+
+.one-dish-description img {
+    width: 80%;
+
+    @media (max-width: 500px) {
+        width: 100%;
+    }
+
 }
