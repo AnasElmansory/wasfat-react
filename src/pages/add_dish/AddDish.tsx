@@ -3,16 +3,12 @@ import {
   TextField,
   InputLabelProps,
   Theme,
-  Button,
-  Chip,
-  Dialog,
-  Card,
+
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
 import { SxProps } from "@mui/system";
 import ImagePickerContainer from "../../components/dish/ImagePicker";
 import { useState } from "react";
-
+import AddCategory from '../../components/dish/AddCategory'
 interface Category {
   id: string;
   name: string;
@@ -81,23 +77,11 @@ export default function AddDish() {
           />
         </div>
       </div>
-      <div className="add-category-picker-container">
-        <Button>
-          <Add />
-          Add Category
-        </Button>
-        <div className="add-category-ids">
-          {categories?.map((category) => (
-            <Chip label={category.name} />
-          ))}
-        </div>
-      </div>
+
       <div className="add-image-picker-container">
         <ImagePickerContainer />
       </div>
-      <Dialog open={false}>
-        <Card>select category</Card>
-      </Dialog>
+      <AddCategory />
     </div>
   );
 }
