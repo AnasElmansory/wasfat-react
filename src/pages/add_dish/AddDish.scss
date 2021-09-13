@@ -6,6 +6,8 @@
 }
 
 .add-category-picker-container {
+    display: flex;
+    justify-content: space-evenly;
     margin: auto;
     margin-block: 26px;
 }

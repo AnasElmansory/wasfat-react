@@ -95,7 +95,7 @@ export default function AddDish() {
       <div className="add-image-picker-container">
         <ImagePickerContainer />
       </div>
-      <Dialog open={true}>
+      <Dialog open={false}>
         <Card>select category</Card>
       </Dialog>
     </div>
