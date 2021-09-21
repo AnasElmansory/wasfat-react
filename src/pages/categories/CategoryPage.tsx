@@ -11,6 +11,7 @@ export default function CategoryPage() {
   const categories = useAppSelector((state) => state.store.category.categories);
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line
   useEffect(() => {
     async function fetch() {
       if (categories.length !== 0) {

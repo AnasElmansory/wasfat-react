@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
-import { Button, Pagination } from "@mui/material";
+import { Pagination } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import "./DishesPage.scss";
 import { firestore, store } from "../../firebase/client";
-import { dishPageFetched, clear } from "../../store/dishes_slice";
+import { dishPageFetched } from "../../store/dishes_slice";
 import { Dish } from "../../firebase/store/types";
 import DishCard from "../../components/dish/DishCard";
 import { useHistory } from "react-router-dom";
@@ -29,7 +29,7 @@ export default function DishesPage() {
     history.push(`${history.location.pathname}/${dish.id}`, dish);
   };
 
-  // dispatch(clear());
+  // eslint-disable-next-line
   useEffect(() => {
     setLoading(true);
     if (!currentDishPage || currentDishPage?.length < 10) {

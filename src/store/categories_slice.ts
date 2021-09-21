@@ -56,6 +56,28 @@ const categorySlice = createSlice({
         return category;
       });
     },
+    categoryDishIncreased(
+      state,
+      action: PayloadAction<{ categoryId: string[] }>
+    ) {
+      state.categories = state.categories.map((category) => {
+        if (action.payload.categoryId.includes(category.id)) {
+          category.dishCount++;
+        }
+        return category;
+      });
+    },
+    categoryDishDecreased(
+      state,
+      action: PayloadAction<{ categoryId: string[] }>
+    ) {
+      state.categories = state.categories.map((category) => {
+        if (action.payload.categoryId.includes(category.id)) {
+          category.dishCount--;
+        }
+        return category;
+      });
+    },
   },
 });
 
@@ -64,6 +86,8 @@ export const {
   categoryPriorityUpdated,
   categoryDishesFetched,
   categoryDishDeleted,
+  categoryDishIncreased,
+  categoryDishDecreased,
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

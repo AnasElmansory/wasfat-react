@@ -4,7 +4,6 @@ import Layout from "./layouts/layout";
 import SignInScreen from "./pages/SignPage";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import LoadingPage from "./pages/LoadingPage";
-import CategoryPage from "./pages/categories/CategoryPage";
 import routes from "./utils/routes";
 import Dashboard from "./pages/dashboard/Dashboard";
 

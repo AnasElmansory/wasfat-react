@@ -11,11 +11,13 @@ export async function getCategories(): Promise<FoodCategory[]> {
     return [] as FoodCategory[];
   } else {
     return query.docs.map((category) => {
+      const data = category.data();
       const foodCategory: FoodCategory = {
-        id: category.data()["id"],
-        name: category.data()["name"],
-        imageUrl: category.data()["imageUrl"],
-        priortiy: category.data()["priority"] as number,
+        id: data["id"] as string,
+        name: data["name"] as string,
+        imageUrl: data["imageUrl"] as string,
+        priortiy: data["priority"] as number,
+        dishCount: data["dishCount"] as number,
         dishes: [],
       };
       return foodCategory;
@@ -35,6 +37,37 @@ export async function updateCategoryPriority(
     );
     return true;
   } catch (_) {
+    return false;
+  }
+}
+
+export async function increaseCategoryDishesCount(
+  categoryId: string[]
+): Promise<boolean> {
+  try {
+    categoryId.forEach(async (category) => {
+      const categoryRef = firestore.doc(store, "food_category", category);
+      await firestore.updateDoc(categoryRef, {
+        dishCount: firestore.increment(1),
+      });
+    });
+    return true;
+  } catch (er) {
+    return false;
+  }
+}
+export async function decreaseCategoryDishesCount(
+  categoryId: string[]
+): Promise<boolean> {
+  try {
+    categoryId.forEach(async (category) => {
+      const categoryRef = firestore.doc(store, "food_category", category);
+      await firestore.updateDoc(categoryRef, {
+        dishCount: firestore.increment(-1),
+      });
+    });
+    return true;
+  } catch (er) {
     return false;
   }
 }

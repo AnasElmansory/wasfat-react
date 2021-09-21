@@ -31,7 +31,7 @@ export default function SingleCategoryPage() {
   const navigateToDishPage = (dish: Dish) => {
     history.push(`${history.location.pathname}/${dish.id}`, dish);
   };
-
+  // eslint-disable-next-line
   useEffect(() => {
     if (category?.dishes.length === 0) {
       console.log("fetching dishes");

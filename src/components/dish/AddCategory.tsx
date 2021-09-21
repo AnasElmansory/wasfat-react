@@ -1,63 +1,69 @@
-import { Add, Cancel } from '@mui/icons-material';
-import { Button, Chip, Dialog, Card, CardActions } from '@mui/material';
-import React from 'react';
-import { useAppSelector } from '../../store/hooks';
-import './AddCategory.scss';
+import { Add, Cancel } from "@mui/icons-material";
+import { Button, Chip, Dialog } from "@mui/material";
+import { useState } from "react";
+import "./AddCategory.scss";
+import { Spinner } from "react-bootstrap";
+import { Category } from "../../firebase/store/types";
 
-interface AddCategoryProps {
+export default function AddCategory({
+  loading,
+  categories,
+  onCategoryToggle,
+}: {
+  loading: boolean;
+  categories: Category[];
+  onCategoryToggle: (category: Category) => void;
+}) {
+  const [showDialog, setDialogOpen] = useState<boolean>(false);
 
-}
-
-interface AddCategoryState {
-    categories: Category[];
-    showDialog: boolean;
-}
-interface Category {
-    id: string;
-    name: string;
-}
-
-class AddCategory extends React.Component<AddCategoryProps, AddCategoryState> {
-    state = {
-        categories: [],
-        showDialog: false,
-    } as AddCategoryState
-    componentDidMount() {
-        const categories = useAppSelector(state => state.store.category.categories.map(item => {
-            const category: Category = {
-                id: item.id,
-                name: item.name,
-            }
-            return category;
-        }));
-        this.setState({ categories })
-    }
-    render() {
-        return (<div className="add-category-picker-container">
-            <Button onClick={() => this.setState({ showDialog: true })
-            }>
-                <Add />
-          Add Category
+  return (
+    <div className="add-category-picker-container">
+      <Button id="add-category-btn" onClick={() => setDialogOpen(true)}>
+        <Add />
+        Add Category
+      </Button>
+      <div className="add-selected-categories">
+        {categories
+          .filter((_category) => _category.isSelected)
+          .map((category) => (
+            <Chip
+              key={category.id}
+              size="medium"
+              className="category-chips"
+              label={category.name}
+            />
+          ))}
+      </div>
+      <Dialog open={showDialog} onClose={() => setDialogOpen(false)} fullWidth>
+        <div className="add-categories-list-container">
+          <h2>Select Category</h2>
+          {loading ? <Spinner variant="primary" animation="border" /> : null}
+          <ul className="add-category-list">
+            {categories.map((category) => {
+              return (
+                <li
+                  id={category.id}
+                  key={category.id}
+                  className={`add-category-item ${
+                    category.isSelected ? "selected" : ""
+                  }`}
+                  onClick={() => onCategoryToggle(category)}
+                >
+                  {category.name}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <Button
+          id="select-category-cancel-btn"
+          color="error"
+          onClick={() => setDialogOpen(false)}
+        >
+          <Cancel />
+          Close
         </Button>
-            <div className="add-category-ids">
-                {this.state.categories.map((category) => (
-                    <Chip label={category.name} />
-                ))}
-            </div>
-            <Dialog open={this.state.showDialog} onClose={
-                () => this.setState({ showDialog: false })
-            }>
-                <Card>select category
-                    <CardActions>
-                        <Button color='error'>
-                            <Cancel />
-                            Close
-                        </Button>
-                    </CardActions>
-                </Card>
-            </Dialog>
-        </div>);
-    }
+      </Dialog>
+    </div>
+  );
 }
-
-export default AddCategory;

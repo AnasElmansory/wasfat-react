@@ -1,4 +1,4 @@
-import { IconButton, Icon, Snackbar } from "@mui/material";
+import { IconButton, Snackbar } from "@mui/material";
 import { Edit, List } from "@mui/icons-material";
 import { useState } from "react";
 import { useHistory } from "react-router";

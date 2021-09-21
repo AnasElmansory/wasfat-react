@@ -3,7 +3,7 @@ export interface FoodCategory {
   name: string;
   imageUrl: string;
   priortiy: number;
-  dishCount?: number;
+  dishCount: number;
   dishes: Dish[];
 }
 
@@ -14,10 +14,16 @@ export type Rating = {
 export interface Dish {
   id: string;
   name: string;
-  rating: Rating[];
+  rating: Rating;
   addDate: number;
   subtitle: string;
   dishImages: string[];
   categoryId: string[];
   dishDescription: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  isSelected: boolean;
 }

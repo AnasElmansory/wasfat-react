@@ -1,0 +1,19 @@
+@import '../../global';
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    height: 80px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background-color: $secondaryColor;
+
+    @media screen and (max-width: 500px) {
+        height: 40px;
+    }
+
+}
+
+.stores {}

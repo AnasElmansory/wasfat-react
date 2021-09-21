@@ -32,7 +32,6 @@ export default function Layout(props: any) {
         };
         if (result) {
           dispatch(loggedIn(_user));
-          // history.replace("/dashboard/categories");
         }
       }
     });
@@ -47,6 +46,7 @@ export default function Layout(props: any) {
         <Sidebar show={sidebarVisible} />
         <div className="main">{props.children}</div>
       </div>
+      {/* <Footer /> */}
     </div>
   );
 }

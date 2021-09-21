@@ -1,5 +1,5 @@
 import "./OneDishPage.scss";
-import { Card, CardMedia, Typography, CardContent, Box } from "@mui/material";
+import { Card, CardMedia, Typography, CardContent } from "@mui/material";
 import { useEffect } from "react";
 import { Dish } from "../../firebase/store/types";
 import { useLocation } from "react-router-dom";

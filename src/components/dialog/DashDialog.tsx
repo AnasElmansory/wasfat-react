@@ -46,7 +46,7 @@ export default function DashDialog({
           onChange={(event) =>
             setInput(
               Number.parseInt(
-                event.target.value == "" ? "0" : event.target.value
+                event.target.value === "" ? "0" : event.target.value
               )
             )
           }

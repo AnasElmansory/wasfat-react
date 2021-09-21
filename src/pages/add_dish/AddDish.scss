@@ -1,8 +1,14 @@
+@import '../../global';
+
 .add-dish-container {
     display: flex;
     flex-direction: column;
     width: 100%;
     margin-block: 16px;
+
+    #images-container {
+        flex-direction: row-reverse;
+    }
 }
 
 .add-category-picker-container {
@@ -25,4 +31,12 @@
 .add-dish-details-section {
     display: flex;
     justify-content: space-evenly;
+}
+
+#add-dish-fab {
+    position: fixed;
+    right: 20px;
+    bottom: 60px;
+    color: white;
+    background-color: $secondaryColor;
 }

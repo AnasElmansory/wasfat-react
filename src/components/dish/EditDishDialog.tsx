@@ -1,20 +1,10 @@
 import { Dish } from "../../firebase/store/types";
 import {
-  extractImages,
-  extractText,
-  formatDescription,
-  getDescription,
   getIngredients,
+  getDescription,
+  generateDishDescription,
 } from "../../utils/dish_helper";
-import {
-  Dialog,
-  TextField,
-  Button,
-  InputLabelProps,
-  Snackbar,
-  Alert,
-  AlertColor,
-} from "@mui/material";
+import { Dialog, TextField, Button, InputLabelProps } from "@mui/material";
 
 import "./EditDishDialog.scss";
 import ImagePickerContainer from "./ImagePicker";
@@ -47,41 +37,6 @@ export default function EditDishDialog({
     getDescription(dish.dishDescription)
   );
 
-  function generateDishDescription(): string {
-    const filteredIngredients = ingredients
-      .replace(/(المكونات|المقادير|المكوّنات)/, "")
-      .trim();
-    const filteredSteps = description
-      .replace(/(طريقه التحضير|طريقة التحضير|الخطوات)/, "")
-      .trim();
-
-    const ingredientsHtml =
-      "<h2>المكونات</h2>\n" +
-      filteredIngredients
-        .split("\n")
-        .map((line) => `<p>${line.trim()}</p>`)
-        .join("\n");
-
-    const descriptionHtml =
-      "<h2>طريقة التحضير</h2>\n" +
-      filteredSteps
-        .split("\n")
-        .map((line) => {
-          if (line.includes("image")) {
-            const imageIndex = Number.parseInt(line.trim().charAt(5));
-            return line.replace(
-              /image([0-2])/,
-              `<img src= "${dishImages[imageIndex - 1]}">`
-            );
-          } else {
-            return `<p>${line.trim()}</p>`;
-          }
-        })
-        .join("\n");
-    const dishDescription = `${ingredientsHtml}\n${descriptionHtml}`;
-    return dishDescription;
-  }
-
   async function onDishEdit() {
     const updatedDish: Dish = {
       ...dish,
@@ -89,7 +44,11 @@ export default function EditDishDialog({
     updatedDish.name = name;
     updatedDish.subtitle = subtitle;
     updatedDish.dishImages = dishImages;
-    updatedDish.dishDescription = generateDishDescription();
+    updatedDish.dishDescription = generateDishDescription({
+      ingredients,
+      description,
+      dishImages,
+    });
     onEdit(updatedDish);
   }
 
@@ -165,7 +124,7 @@ export default function EditDishDialog({
         <ImagePickerContainer
           images={dishImages}
           dishId={dish.id}
-          categoryId={!dish.categoryId ? undefined : dish.categoryId[0]}
+          categoryId={dish.categoryId[0]}
           updateDishImages={updateDishImages}
         />
 

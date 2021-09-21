@@ -1,7 +1,7 @@
 import "./ImagePicker.scss";
 import { Alert, IconButton, Snackbar, AlertColor } from "@mui/material";
 import { Spinner } from "react-bootstrap";
-import { Image, CloudUpload } from "@mui/icons-material";
+import { Image, CloudUpload, Close } from "@mui/icons-material";
 import FilePicker, { InputErrorCode } from "@mavedev/react-file-picker";
 import { useState } from "react";
 import { fireStorage, storage } from "../../firebase/client";
@@ -14,14 +14,14 @@ interface ImagePickerProps {
   openSnackbar: () => void;
   setSnackColor: (color: AlertColor) => void;
   setSnackEvent: (event: string) => void;
-  updateDishImages: (image: string, index: number) => void;
+  updateDishImages: (image: string, index: number, toDelete?: boolean) => void;
 }
 
 interface ImagesContainerProps {
-  images?: string[];
-  dishId?: string;
-  categoryId?: string;
-  updateDishImages?: (image: string, index: number) => void;
+  images: string[];
+  dishId: string;
+  categoryId: string;
+  updateDishImages: (image: string, index: number, toDelete?: boolean) => void;
 }
 
 export function ImagePicker({
@@ -32,19 +32,23 @@ export function ImagePicker({
   ...callbacks
 }: ImagePickerProps) {
   const [currentImage, setImage] = useState(image);
-  const [currentImageFile, setCurrentImageFile] = useState<File | undefined>();
+  const [currentImageFile, setCurrentImageFile] = useState<File>();
   const [isUploading, setUploadingState] = useState<boolean>(false);
   const onFilePicked = async (file: File) => {
-    setCurrentImageFile(file);
-    const arrayBuffer = await file.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-    document
-      .querySelector(`#image-picker-${index}`)
-      ?.setAttribute("src", `data:${file.type};base64, ${base64}`);
-    setImage(`data:${file.type};base64, ${base64}`);
-    callbacks.setSnackColor("success");
-    callbacks.setSnackEvent("image is loaded successfully");
-    callbacks.openSnackbar();
+    try {
+      setCurrentImageFile(file);
+      const arrayBuffer = await file.arrayBuffer();
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      document
+        .querySelector(`#image-picker-${index}`)
+        ?.setAttribute("src", `data:${file.type};base64, ${base64}`);
+      setImage(`data:${file.type};base64, ${base64}`);
+      callbacks.setSnackColor("success");
+      callbacks.setSnackEvent("image is loaded successfully");
+      callbacks.openSnackbar();
+    } catch (err: any) {
+      console.log(err);
+    }
   };
   const onError = (errorCode: number) => {
     let errorEvent: string;
@@ -76,25 +80,26 @@ export function ImagePicker({
       );
       const downloadUrl = await fireStorage.getDownloadURL(uploadResult.ref);
       callbacks.updateDishImages(downloadUrl, index);
-      // callback to set dishimages
       setUploadingState(false);
     }
+  };
+
+  const reset = () => {
+    setImage(image);
+    setCurrentImageFile(undefined);
+    callbacks.updateDishImages("", index, true);
   };
 
   return (
     <div className="image-picker-container">
       <div className="picker-image">
-        <img
-          id={`image-picker-${index}`}
-          src={currentImage || ""}
-          alt="image"
-        />
+        <img id={`image-picker-${index}`} src={currentImage || ""} />
       </div>
 
       <div className="picker-actions">
         <FilePicker
           onFilePicked={(file) => onFilePicked(file)}
-          extensions={[".png", ".jpg", ".jpeg"]}
+          extensions={[".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp"]}
           maxSize={5}
           sizeUnit="MB"
           onError={onError}
@@ -110,6 +115,11 @@ export function ImagePicker({
         >
           <CloudUpload />
         </IconButton>
+        {currentImage || currentImageFile ? (
+          <IconButton color="error" onClick={reset}>
+            <Close />
+          </IconButton>
+        ) : null}
         {isUploading ? (
           <Spinner animation="border" variant="primary" />
         ) : (
@@ -129,25 +139,23 @@ export default function ImagePickerContainer({
   const [openSnackbar, setSnackOpen] = useState(false);
   const [snackbarEvent, setSnackEvent] = useState("");
   const [snackbarColor, setSnackColor] = useState<AlertColor>("success");
-
   const onSnackClose = () => setSnackOpen(false);
+
   return (
-    <div className="edit-dish-images-picker">
-      {[0, 1, 2].map((imageIndex) =>
-        !categoryId || !images || !dishId || !updateDishImages ? null : (
-          <ImagePicker
-            key={imageIndex}
-            image={images[imageIndex]}
-            index={imageIndex}
-            dishId={dishId}
-            categoryId={categoryId}
-            updateDishImages={updateDishImages}
-            openSnackbar={() => setSnackOpen(true)}
-            setSnackColor={(color) => setSnackColor(color)}
-            setSnackEvent={(event) => setSnackEvent(event)}
-          />
-        )
-      )}
+    <div className="images-picker">
+      {[0, 1, 2].map((imageIndex) => (
+        <ImagePicker
+          key={imageIndex}
+          image={images ? images[imageIndex] : undefined}
+          index={imageIndex}
+          dishId={dishId}
+          categoryId={categoryId}
+          openSnackbar={() => setSnackOpen(true)}
+          setSnackColor={(color) => setSnackColor(color)}
+          setSnackEvent={(event) => setSnackEvent(event)}
+          updateDishImages={updateDishImages}
+        />
+      ))}
 
       <Snackbar
         open={openSnackbar}

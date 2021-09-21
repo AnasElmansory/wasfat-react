@@ -18,9 +18,13 @@ import { useState } from "react";
 import { firestore, store } from "../../firebase/client";
 import { FirestoreError } from "@firebase/firestore";
 import { useAppDispatch } from "../../store/hooks";
-import { categoryDishDeleted } from "../../store/categories_slice";
+import {
+  categoryDishDecreased,
+  categoryDishDeleted,
+} from "../../store/categories_slice";
 import { dishDeleted } from "../../store/dishes_slice";
 import EditDishDialog from "./EditDishDialog";
+import { decreaseCategoryDishesCount } from "../../firebase/store/categories";
 
 interface DishCardProps {
   dish: Dish;
@@ -44,10 +48,14 @@ export default function DishCard({
       const dishRef = firestore.doc(store, "dishes", dish.id);
       try {
         await firestore.deleteDoc(dishRef);
+        const result = await decreaseCategoryDishesCount(dish.categoryId);
         setSnackbarColor("success");
         setSnackbarEvent(`dish ${dish.name} has been deleted successfully!`);
         if (page) {
           dispatch(dishDeleted({ page, dishId: dish.id }));
+        }
+        if (result) {
+          dispatch(categoryDishDecreased({ categoryId: dish.categoryId }));
         }
         dispatch(
           categoryDishDeleted({ categoryId: dish.categoryId, dishId: dish.id })

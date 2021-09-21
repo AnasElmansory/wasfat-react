@@ -1,4 +1,3 @@
-import { FirebaseError } from "@firebase/util";
 import { firebaseAuth, auth as iAuth } from "./client";
 import isAdmin from "./helper";
 export interface User {
@@ -26,7 +25,7 @@ class Auth {
     if (user.permission !== "user") {
       cb(user);
     } else {
-      onFailed('you don\'t have admin permission')
+      onFailed("you don't have admin permission");
     }
     // try {
     // } catch (firebaseError) {

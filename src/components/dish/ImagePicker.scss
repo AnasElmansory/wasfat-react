@@ -30,11 +30,12 @@
     align-items: center;
 }
 
-.edit-dish-images-picker {
+.images-picker {
     display: flex;
     justify-content: space-evenly;
     flex-flow: wrap;
     margin-block: 24px;
+    direction: rtl;
 
     @media screen and (max-width: 400px) {
         margin-bottom: 16px;
